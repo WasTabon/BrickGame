@@ -11,7 +11,13 @@ public class DemolitionController : MonoBehaviour
     public float pullDuration = 1.0f;
     public float settleDelay = 0.5f;
 
+    public GameHUDController hud;
+    public LevelFlowController flow;
+    public int maxThrows = 0;
+
     private bool busy;
+    private bool depleted;
+    private int throwsUsed;
     private Brick[] allBricks;
 
     private void Start()
@@ -22,7 +28,7 @@ public class DemolitionController : MonoBehaviour
 
     private void Update()
     {
-        if (busy) return;
+        if (busy || depleted) return;
         if (!Input.GetMouseButtonDown(0)) return;
         if (IsPointerOverUI()) return;
 
@@ -31,6 +37,12 @@ public class DemolitionController : MonoBehaviour
 
         if (nearest != null)
         {
+            if (maxThrows > 0)
+            {
+                throwsUsed++;
+                if (hud != null) hud.SetThrowsLeft(maxThrows - throwsUsed);
+                if (throwsUsed >= maxThrows) depleted = true;
+            }
             StartCoroutine(PullRoutine(nearest));
         }
     }
@@ -71,6 +83,11 @@ public class DemolitionController : MonoBehaviour
         yield return new WaitForSeconds(settleDelay);
 
         busy = false;
+
+        if (depleted && maxThrows > 0 && flow != null)
+        {
+            flow.ForceCollect();
+        }
     }
 
     private bool IsPointerOverUI()

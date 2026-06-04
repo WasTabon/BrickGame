@@ -28,6 +28,11 @@ public class LevelFlowController : MonoBehaviour
         StartCoroutine(CollectRoutine());
     }
 
+    public void ForceCollect()
+    {
+        OnCollect();
+    }
+
     private IEnumerator CollectRoutine()
     {
         demolition.enabled = false;

@@ -8,6 +8,7 @@ public class GameHUDController : MonoBehaviour
     public TextMeshProUGUI countText;
     public TextMeshProUGUI levelText;
     public Button collectButton;
+    public TextMeshProUGUI throwsText;
 
     private int total;
     private int shown;
@@ -25,6 +26,26 @@ public class GameHUDController : MonoBehaviour
     public void SetLevel(int level)
     {
         if (levelText != null) levelText.text = "Level " + level;
+    }
+
+    public void SetThrows(int maxThrows)
+    {
+        if (throwsText == null) return;
+        if (maxThrows <= 0)
+        {
+            throwsText.gameObject.SetActive(false);
+            return;
+        }
+        throwsText.gameObject.SetActive(true);
+        throwsText.text = "Throws: " + maxThrows;
+    }
+
+    public void SetThrowsLeft(int left)
+    {
+        if (throwsText == null || !throwsText.gameObject.activeSelf) return;
+        throwsText.text = "Throws: " + Mathf.Max(0, left);
+        throwsText.transform.DOComplete();
+        throwsText.transform.DOPunchScale(Vector3.one * 0.18f, 0.25f, 6, 1f);
     }
 
     public void SetTotal(int value)

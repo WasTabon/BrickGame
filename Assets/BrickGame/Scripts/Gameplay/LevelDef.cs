@@ -8,4 +8,9 @@ public class LevelDef
     public int woodEvery = 0;
     public int bombEvery = 0;
     public int iceRows = 0;
+    public int brittleEvery = 0;
+    public int stickyEvery = 0;
+    public int maxThrows = 0;
+    public float pitMoveAmplitude = 0f;
+    public float pitMoveSpeed = 1.2f;
 }

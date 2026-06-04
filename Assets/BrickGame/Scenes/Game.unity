@@ -1593,6 +1593,9 @@ MonoBehaviour:
   truck: {fileID: 750287197}
   pullDuration: 1
   settleDelay: 0.5
+  hud: {fileID: 1360806266}
+  flow: {fileID: 910043147}
+  maxThrows: 0
 --- !u!4 &350654956
 Transform:
   m_ObjectHideFlags: 0
@@ -5228,6 +5231,7 @@ RectTransform:
   - {fileID: 1244485885}
   - {fileID: 1054850061}
   - {fileID: 782417923}
+  - {fileID: 1960396989}
   m_Father: {fileID: 1233826039}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5967,6 +5971,72 @@ CanvasRenderer:
   m_GameObject: {fileID: 1195252690}
   m_CullTransparentMesh: 1
 --- !u!21 &1205283822
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LiberationSans SDF Material (Instance)
+  m_Shader: {fileID: 4800000, guid: fe393ace9b354375a9cb14cdbbc28be4, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 28684132378477856, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ColorMask: 15
+    - _CullMode: 0
+    - _FaceDilate: 0
+    - _GradientScale: 10
+    - _MaskSoftnessX: 0
+    - _MaskSoftnessY: 0
+    - _OutlineSoftness: 0
+    - _OutlineWidth: 0.15
+    - _PerspectiveFilter: 0.875
+    - _ScaleRatioA: 0.9
+    - _ScaleRatioB: 1
+    - _ScaleRatioC: 0.73125
+    - _ScaleX: 1
+    - _ScaleY: 1
+    - _ShaderFlags: 0
+    - _Sharpness: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _TextureHeight: 1024
+    - _TextureWidth: 1024
+    - _UnderlayDilate: 0
+    - _UnderlayOffsetX: 0
+    - _UnderlayOffsetY: 0
+    - _UnderlaySoftness: 0
+    - _VertexOffsetX: 0
+    - _VertexOffsetY: 0
+    - _WeightBold: 0.75
+    - _WeightNormal: 0
+    m_Colors:
+    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_BuildTextureStacks: []
+--- !u!21 &1211686666
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
@@ -7037,6 +7107,7 @@ MonoBehaviour:
   countText: {fileID: 1049065610}
   levelText: {fileID: 1054850063}
   collectButton: {fileID: 1244485881}
+  throwsText: {fileID: 1960396990}
 --- !u!4 &1360806267
 Transform:
   m_ObjectHideFlags: 0
@@ -10360,6 +10431,140 @@ Material:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_BuildTextureStacks: []
+--- !u!1 &1960396988
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1960396989}
+  - component: {fileID: 1960396991}
+  - component: {fileID: 1960396990}
+  m_Layer: 0
+  m_Name: ThrowsText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1960396989
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960396988}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1103816541}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -270}
+  m_SizeDelta: {x: 620, y: 80}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1960396990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960396988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 'Throws: 0'
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 1211686666}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 1211686666}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 0.9607843, g: 0.6509804, b: 0.13725491, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: 0
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 48
+  m_fontSizeBase: 48
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1960396991
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960396988}
+  m_CullTransparentMesh: 1
 --- !u!1 &1974005399
 GameObject:
   m_ObjectHideFlags: 0
@@ -11377,6 +11582,7 @@ MonoBehaviour:
   brickPhysics: {fileID: 6200000, guid: 57e9978d982d4cd4a8131dc93b656b04, type: 2}
   icePhysics: {fileID: 6200000, guid: 8f0fb63319e8bae468f9d2f040657ef4, type: 2}
   hud: {fileID: 1360806266}
+  demolition: {fileID: 350654955}
   cam: {fileID: 2018042932}
   levels:
   - rows: 16
@@ -11386,6 +11592,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 0
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 17
     columns: 2
     pitCount: 1
@@ -11393,6 +11604,11 @@ MonoBehaviour:
     woodEvery: 5
     bombEvery: 0
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 18
     columns: 2
     pitCount: 1
@@ -11400,6 +11616,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 0
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 19
     columns: 2
     pitCount: 1
@@ -11407,6 +11628,11 @@ MonoBehaviour:
     woodEvery: 7
     bombEvery: 0
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 6
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 20
     columns: 2
     pitCount: 2
@@ -11414,6 +11640,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 0
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 1.2
+    pitMoveSpeed: 1.2
   - rows: 21
     columns: 3
     pitCount: 2
@@ -11421,6 +11652,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 0
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 22
     columns: 3
     pitCount: 2
@@ -11428,6 +11664,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 0
     iceRows: 3
+    brittleEvery: 7
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 22
     columns: 3
     pitCount: 2
@@ -11435,6 +11676,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 0
     iceRows: 3
+    brittleEvery: 0
+    stickyEvery: 6
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 23
     columns: 3
     pitCount: 2
@@ -11442,6 +11688,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 9
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 1
+    pitMoveSpeed: 1.1
   - rows: 24
     columns: 3
     pitCount: 2
@@ -11449,6 +11700,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 9
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 5
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 24
     columns: 3
     pitCount: 2
@@ -11456,6 +11712,11 @@ MonoBehaviour:
     woodEvery: 7
     bombEvery: 0
     iceRows: 4
+    brittleEvery: 0
+    stickyEvery: 5
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 25
     columns: 3
     pitCount: 2
@@ -11463,6 +11724,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 10
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 0
+    maxThrows: 5
+    pitMoveAmplitude: 1.4
+    pitMoveSpeed: 1.4
   - rows: 26
     columns: 3
     pitCount: 2
@@ -11470,6 +11736,11 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 11
     iceRows: 4
+    brittleEvery: 9
+    stickyEvery: 0
+    maxThrows: 0
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 26
     columns: 3
     pitCount: 2
@@ -11477,6 +11748,11 @@ MonoBehaviour:
     woodEvery: 7
     bombEvery: 9
     iceRows: 0
+    brittleEvery: 0
+    stickyEvery: 6
+    maxThrows: 5
+    pitMoveAmplitude: 0
+    pitMoveSpeed: 1.2
   - rows: 28
     columns: 3
     pitCount: 2
@@ -11484,6 +11760,11 @@ MonoBehaviour:
     woodEvery: 8
     bombEvery: 11
     iceRows: 5
+    brittleEvery: 9
+    stickyEvery: 7
+    maxThrows: 6
+    pitMoveAmplitude: 1.5
+    pitMoveSpeed: 1.3
   brickW: 0.62
   brickH: 0.34
   supportH: 0.6

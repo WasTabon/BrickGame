@@ -4,18 +4,20 @@ using DG.Tweening;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Brick : MonoBehaviour
 {
-    public enum BrickMaterial { Normal, Ice, Stone, Wood, Bomb }
+    public enum BrickMaterial { Normal, Ice, Stone, Wood, Bomb, Brittle, Sticky }
 
     [HideInInspector] public Rigidbody2D body;
     public BrickMaterial material = BrickMaterial.Normal;
 
     public float explosionRadius = 2.2f;
     public float explosionForce = 9f;
+    public float shatterSpeed = 4.5f;
 
     private SpriteRenderer sr;
     private Color baseColor;
     private float lastImpactTime;
     private bool exploded;
+    private bool shattered;
 
     private void Awake()
     {
@@ -53,6 +55,10 @@ public class Brick : MonoBehaviour
         {
             Explode();
         }
+        else if (material == BrickMaterial.Brittle && !shattered && speed >= shatterSpeed)
+        {
+            Shatter();
+        }
     }
 
     private void Explode()
@@ -78,5 +84,18 @@ public class Brick : MonoBehaviour
         {
             ImpactManager.Instance.RegisterImpact(transform.position, 12f);
         }
+    }
+
+    private void Shatter()
+    {
+        shattered = true;
+
+        if (ImpactManager.Instance != null)
+        {
+            ImpactManager.Instance.RegisterImpact(transform.position, shatterSpeed + 2f);
+        }
+
+        sr.DOKill();
+        Destroy(gameObject);
     }
 }
