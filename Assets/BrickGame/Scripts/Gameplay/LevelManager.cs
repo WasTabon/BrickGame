@@ -5,6 +5,7 @@ public class LevelManager : MonoBehaviour
 {
     public Sprite squareSprite;
     public PhysicsMaterial2D brickPhysics;
+    public PhysicsMaterial2D icePhysics;
     public GameHUDController hud;
     public Camera cam;
     public List<LevelDef> levels = new List<LevelDef>();
@@ -14,7 +15,9 @@ public class LevelManager : MonoBehaviour
     public float supportH = 0.6f;
     public float colGap = 0.9f;
     public float gap = 0.002f;
-    public float buildingBaseX = 2.5f;
+    public float buildingBaseX = 3.5f;
+    public float truckX = -6f;
+    public float pitHalfWidth = 0.8f;
 
     private readonly List<CollectionPit> pits = new List<CollectionPit>();
 
@@ -24,7 +27,10 @@ public class LevelManager : MonoBehaviour
     private static readonly Color ColorLight = HexColor("6BA8F0");
     private static readonly Color ColorDark = HexColor("3A6FB0");
     private static readonly Color ColorBeam = HexColor("F5A623");
-    private static readonly Color ColorHeavy = HexColor("20243A");
+    private static readonly Color ColorStone = HexColor("6E6E78");
+    private static readonly Color ColorWood = HexColor("9B6B3A");
+    private static readonly Color ColorIce = HexColor("8FD8E8");
+    private static readonly Color ColorBomb = HexColor("C0392B");
 
     private void Awake()
     {
@@ -78,8 +84,8 @@ public class LevelManager : MonoBehaviour
     private void BuildPits(LevelDef def)
     {
         float[] centers = def.pitCount >= 2
-            ? new float[] { -1.3f, 0.9f }
-            : new float[] { -0.5f };
+            ? new float[] { -0.3f, 2.4f }
+            : new float[] { 1.2f };
 
         foreach (float cx in centers)
         {
@@ -89,7 +95,7 @@ public class LevelManager : MonoBehaviour
 
     private CollectionPit BuildPit(float centerX)
     {
-        float halfWidth = 1.4f + Upgrades.MagnetBonus();
+        float halfWidth = pitHalfWidth + Upgrades.MagnetBonus();
         GameObject visual = new GameObject("PitVisual");
 
         GameObject floor = NewSprite("Floor", new Color(0.96f, 0.65f, 0.14f, 0.45f), new Vector3(centerX, 0.06f, 0f), new Vector3(halfWidth * 2f, 0.25f, 1f), -3);
@@ -129,7 +135,7 @@ public class LevelManager : MonoBehaviour
 
         for (int i = 0; i < columns; i++)
         {
-            BuildBrick(building.transform, new Vector3(colX[i], supportH * 0.5f, 0f), new Vector3(brickW, supportH, 1f), ColorSupport, false);
+            BuildBrick(building.transform, new Vector3(colX[i], supportH * 0.5f, 0f), new Vector3(brickW, supportH, 1f), Brick.BrickMaterial.Normal, ColorSupport);
             count++;
         }
 
@@ -143,7 +149,7 @@ public class LevelManager : MonoBehaviour
 
             if (beamRow)
             {
-                BuildBrick(building.transform, new Vector3(buildingBaseX, yc, 0f), new Vector3(totalWidth + brickW, brickH, 1f), ColorBeam, false);
+                BuildBrick(building.transform, new Vector3(buildingBaseX, yc, 0f), new Vector3(totalWidth + brickW, brickH, 1f), Brick.BrickMaterial.Normal, ColorBeam);
                 count++;
             }
             else
@@ -151,9 +157,9 @@ public class LevelManager : MonoBehaviour
                 for (int i = 0; i < columns; i++)
                 {
                     brickOrdinal++;
-                    bool heavy = def.heavyEvery > 0 && (brickOrdinal % def.heavyEvery == 0);
-                    Color c = heavy ? ColorHeavy : Color.Lerp(ColorDark, ColorLight, (float)r / def.rows);
-                    BuildBrick(building.transform, new Vector3(colX[i], yc, 0f), new Vector3(brickW, brickH, 1f), c, heavy);
+                    Brick.BrickMaterial mat = PickMaterial(def, r, brickOrdinal);
+                    Color c = MaterialColor(mat, r, def.rows);
+                    BuildBrick(building.transform, new Vector3(colX[i], yc, 0f), new Vector3(brickW, brickH, 1f), mat, c);
                     count++;
                 }
             }
@@ -164,7 +170,28 @@ public class LevelManager : MonoBehaviour
         return count;
     }
 
-    private void BuildBrick(Transform parent, Vector3 pos, Vector3 scale, Color color, bool heavy)
+    private Brick.BrickMaterial PickMaterial(LevelDef def, int row, int ordinal)
+    {
+        if (def.iceRows > 0 && row < def.iceRows) return Brick.BrickMaterial.Ice;
+        if (def.bombEvery > 0 && ordinal % def.bombEvery == 0) return Brick.BrickMaterial.Bomb;
+        if (def.stoneEvery > 0 && ordinal % def.stoneEvery == 0) return Brick.BrickMaterial.Stone;
+        if (def.woodEvery > 0 && ordinal % def.woodEvery == 0) return Brick.BrickMaterial.Wood;
+        return Brick.BrickMaterial.Normal;
+    }
+
+    private Color MaterialColor(Brick.BrickMaterial mat, int row, int rows)
+    {
+        switch (mat)
+        {
+            case Brick.BrickMaterial.Ice: return ColorIce;
+            case Brick.BrickMaterial.Stone: return ColorStone;
+            case Brick.BrickMaterial.Wood: return ColorWood;
+            case Brick.BrickMaterial.Bomb: return ColorBomb;
+            default: return Color.Lerp(ColorDark, ColorLight, (float)row / Mathf.Max(1, rows));
+        }
+    }
+
+    private void BuildBrick(Transform parent, Vector3 pos, Vector3 scale, Brick.BrickMaterial mat, Color color)
     {
         GameObject go = new GameObject("Brick");
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
@@ -175,25 +202,44 @@ public class LevelManager : MonoBehaviour
         go.transform.localScale = scale;
         go.transform.SetParent(parent, true);
 
+        float massFactor = 8f;
+        if (mat == Brick.BrickMaterial.Stone) massFactor = 24f;
+        else if (mat == Brick.BrickMaterial.Wood) massFactor = 4f;
+        else if (mat == Brick.BrickMaterial.Bomb) massFactor = 10f;
+
         Rigidbody2D rb = go.AddComponent<Rigidbody2D>();
         rb.gravityScale = 2.0f;
-        rb.mass = scale.x * scale.y * (heavy ? 16f : 8f);
+        rb.mass = scale.x * scale.y * massFactor;
         rb.drag = 0.2f;
         rb.angularDrag = 0.8f;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
 
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
         col.size = Vector2.one;
-        col.sharedMaterial = brickPhysics;
+        col.sharedMaterial = (mat == Brick.BrickMaterial.Ice && icePhysics != null) ? icePhysics : brickPhysics;
 
-        go.AddComponent<Brick>();
+        Brick brick = go.AddComponent<Brick>();
+        brick.material = mat;
     }
 
     private void FitCamera(LevelDef def)
     {
         if (cam == null) return;
+
+        float aspect = 0.5625f;
+        int columns = Mathf.Clamp(def.columns, 1, 4);
+        float towerRight = buildingBaseX + (columns - 1) * colGap * 0.5f + brickW;
+        float left = truckX - 1.5f;
+        float right = towerRight + 1.5f;
+        float worldWidth = right - left;
+
+        float sizeW = (worldWidth * 0.5f) / aspect;
         float towerTop = supportH + def.rows * (brickH + gap);
-        cam.orthographicSize = Mathf.Clamp(towerTop * 0.9f + 4f, 10f, 15f);
+        float sizeH = (towerTop + 2f) * 0.5f + 1.5f;
+        float size = Mathf.Max(sizeW, sizeH);
+
+        cam.orthographicSize = size;
+        cam.transform.position = new Vector3((left + right) * 0.5f, size - 3f, -10f);
     }
 
     private GameObject NewSprite(string name, Color color, Vector3 pos, Vector3 scale, int order)

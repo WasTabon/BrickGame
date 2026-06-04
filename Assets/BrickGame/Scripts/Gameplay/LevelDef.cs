@@ -3,6 +3,9 @@ public class LevelDef
 {
     public int rows = 16;
     public int columns = 2;
-    public int heavyEvery = 0;
     public int pitCount = 1;
+    public int stoneEvery = 0;
+    public int woodEvery = 0;
+    public int bombEvery = 0;
+    public int iceRows = 0;
 }

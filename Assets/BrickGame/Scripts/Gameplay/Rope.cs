@@ -6,6 +6,7 @@ public class Rope : MonoBehaviour
     public Transform truckAnchor;
     public float maxPullForce = 60f;
     public float rampTime = 0.5f;
+    public float massCap = 3f;
 
     private LineRenderer line;
     private Rigidbody2D target;
@@ -57,6 +58,7 @@ public class Rope : MonoBehaviour
         Vector2 dir = (Vector2)truckAnchor.position - target.worldCenterOfMass;
         dir.Normalize();
 
-        target.AddForce(dir * maxPullForce * t * target.mass, ForceMode2D.Force);
+        float massFactor = Mathf.Min(target.mass, massCap);
+        target.AddForce(dir * maxPullForce * t * massFactor, ForceMode2D.Force);
     }
 }

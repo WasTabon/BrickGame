@@ -4,11 +4,18 @@ using DG.Tweening;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Brick : MonoBehaviour
 {
+    public enum BrickMaterial { Normal, Ice, Stone, Wood, Bomb }
+
     [HideInInspector] public Rigidbody2D body;
+    public BrickMaterial material = BrickMaterial.Normal;
+
+    public float explosionRadius = 2.2f;
+    public float explosionForce = 9f;
 
     private SpriteRenderer sr;
     private Color baseColor;
     private float lastImpactTime;
+    private bool exploded;
 
     private void Awake()
     {
@@ -40,6 +47,36 @@ public class Brick : MonoBehaviour
         if (ImpactManager.Instance != null)
         {
             ImpactManager.Instance.RegisterImpact(point, speed);
+        }
+
+        if (material == BrickMaterial.Bomb && !exploded && speed >= 2.5f)
+        {
+            Explode();
+        }
+    }
+
+    private void Explode()
+    {
+        exploded = true;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
+        foreach (Collider2D hit in hits)
+        {
+            Rigidbody2D rb = hit.attachedRigidbody;
+            if (rb == null || rb == body) continue;
+
+            Vector2 dir = rb.worldCenterOfMass - (Vector2)transform.position;
+            float dist = Mathf.Max(0.2f, dir.magnitude);
+            rb.AddForce(dir.normalized * explosionForce * rb.mass / dist, ForceMode2D.Impulse);
+        }
+
+        sr.DOKill();
+        sr.color = Color.white;
+        sr.DOColor(baseColor, 0.25f);
+
+        if (ImpactManager.Instance != null)
+        {
+            ImpactManager.Instance.RegisterImpact(transform.position, 12f);
         }
     }
 }

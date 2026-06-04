@@ -3163,7 +3163,7 @@ Transform:
   m_GameObject: {fileID: 750287196}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.5, y: 0.6, z: 0}
+  m_LocalPosition: {x: -6, y: 0.6, z: 0}
   m_LocalScale: {x: 1.5, y: 1.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7553,6 +7553,7 @@ MonoBehaviour:
   truckAnchor: {fileID: 263574153}
   maxPullForce: 60
   rampTime: 0.5
+  massCap: 3
 --- !u!120 &1423583461
 LineRenderer:
   serializedVersion: 2
@@ -11374,35 +11375,60 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   squareSprite: {fileID: 21300000, guid: 4781b6ef0e8d9a3489e4f5ffea333215, type: 3}
   brickPhysics: {fileID: 6200000, guid: 57e9978d982d4cd4a8131dc93b656b04, type: 2}
+  icePhysics: {fileID: 6200000, guid: 8f0fb63319e8bae468f9d2f040657ef4, type: 2}
   hud: {fileID: 1360806266}
   cam: {fileID: 2018042932}
   levels:
   - rows: 16
     columns: 2
-    heavyEvery: 0
     pitCount: 1
+    stoneEvery: 0
+    woodEvery: 0
+    bombEvery: 0
+    iceRows: 0
   - rows: 18
     columns: 2
-    heavyEvery: 0
     pitCount: 1
+    stoneEvery: 0
+    woodEvery: 5
+    bombEvery: 0
+    iceRows: 0
   - rows: 20
     columns: 2
-    heavyEvery: 6
     pitCount: 1
+    stoneEvery: 6
+    woodEvery: 0
+    bombEvery: 0
+    iceRows: 0
   - rows: 22
     columns: 3
-    heavyEvery: 6
     pitCount: 2
+    stoneEvery: 6
+    woodEvery: 0
+    bombEvery: 0
+    iceRows: 3
+  - rows: 24
+    columns: 3
+    pitCount: 2
+    stoneEvery: 5
+    woodEvery: 0
+    bombEvery: 9
+    iceRows: 0
   - rows: 26
     columns: 3
-    heavyEvery: 4
     pitCount: 2
+    stoneEvery: 5
+    woodEvery: 7
+    bombEvery: 11
+    iceRows: 4
   brickW: 0.62
   brickH: 0.34
   supportH: 0.6
   colGap: 0.9
   gap: 0.002
-  buildingBaseX: 2.5
+  buildingBaseX: 3.5
+  truckX: -6
+  pitHalfWidth: 0.8
 --- !u!4 &2146565295
 Transform:
   m_ObjectHideFlags: 0
