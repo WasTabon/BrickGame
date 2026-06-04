@@ -59,6 +59,7 @@ public class LevelFlowController : MonoBehaviour
 
     private void Battle()
     {
-        TransitionManager.Instance.FadeAndLoadScene("Game");
+        GameSession.CollectedBricks = pit.CurrentCount();
+        TransitionManager.Instance.FadeAndLoadScene("Battle");
     }
 }
