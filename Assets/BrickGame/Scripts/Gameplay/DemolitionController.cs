@@ -62,6 +62,7 @@ public class DemolitionController : MonoBehaviour
         brick.Highlight();
         truck.Recoil();
         rope.Attach(brick.body);
+        if (HapticManager.Instance != null) HapticManager.Instance.Medium();
 
         yield return new WaitForSeconds(pullDuration);
 

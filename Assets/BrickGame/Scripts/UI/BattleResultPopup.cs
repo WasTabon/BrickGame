@@ -35,6 +35,15 @@ public class BattleResultPopup : MonoBehaviour
 
         if (win) Economy.Add(GameSession.CollectedBricks);
 
+        if (HapticManager.Instance != null)
+        {
+            if (win) HapticManager.Instance.Heavy();
+            else HapticManager.Instance.Medium();
+        }
+
+        CameraShake shake = Camera.main != null ? Camera.main.GetComponent<CameraShake>() : null;
+        if (shake != null) shake.Shake(win ? 0.12f : 0.22f);
+
         titleText.text = win ? "VICTORY" : "DEFEAT";
         titleText.color = win ? new Color(0.96f, 0.65f, 0.14f, 1f) : new Color(0.88f, 0.33f, 0.27f, 1f);
         subtitleText.text = win ? "Wave cleared!" : "They broke through...";

@@ -32,6 +32,8 @@ public class PitJuice : MonoBehaviour
         if (Time.time - lastTime < 0.05f) return;
         lastTime = Time.time;
 
+        if (HapticManager.Instance != null) HapticManager.Instance.Light();
+
         Pulse(floor, floorBase);
         Pulse(postL, postLBase);
         Pulse(postR, postRBase);

@@ -12,6 +12,15 @@ public class GameHUDController : MonoBehaviour
     private int total;
     private int shown;
     private Tween countTween;
+    private Tween collectPulse;
+
+    private void Start()
+    {
+        if (collectButton != null && collectButton.gameObject.activeSelf)
+        {
+            StartCollectPulse();
+        }
+    }
 
     public void SetLevel(int level)
     {
@@ -44,12 +53,22 @@ public class GameHUDController : MonoBehaviour
         {
             collectButton.gameObject.SetActive(true);
             collectButton.transform.localScale = Vector3.zero;
-            collectButton.transform.DOScale(1f, 0.35f).SetEase(Ease.OutBack);
+            collectButton.transform.DOScale(1f, 0.35f).SetEase(Ease.OutBack)
+                .OnComplete(StartCollectPulse);
         }
         else
         {
+            collectPulse?.Kill();
             collectButton.transform.DOScale(0f, 0.2f).SetEase(Ease.InBack)
                 .OnComplete(() => collectButton.gameObject.SetActive(false));
         }
+    }
+
+    private void StartCollectPulse()
+    {
+        collectPulse?.Kill();
+        collectButton.transform.localScale = Vector3.one;
+        collectPulse = collectButton.transform.DOScale(1.06f, 0.8f)
+            .SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
     }
 }

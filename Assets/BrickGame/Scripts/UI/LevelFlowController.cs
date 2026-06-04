@@ -39,6 +39,15 @@ public class LevelFlowController : MonoBehaviour
         int total = levelManager.TotalBricks;
         int stars = ComputeStars(count, total);
 
+        if (HapticManager.Instance != null)
+        {
+            if (stars >= 3) HapticManager.Instance.Heavy();
+            else HapticManager.Instance.Medium();
+        }
+
+        CameraShake shake = Camera.main != null ? Camera.main.GetComponent<CameraShake>() : null;
+        if (shake != null && stars >= 3) shake.Shake(0.15f);
+
         popup.Show(count, total, stars);
     }
 
