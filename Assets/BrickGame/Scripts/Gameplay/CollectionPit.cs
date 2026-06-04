@@ -7,6 +7,7 @@ public class CollectionPit : MonoBehaviour
     public int totalBricks;
 
     public event Action<int> OnCountChanged;
+    public event Action<Vector2> OnBrickEntered;
 
     private readonly HashSet<Brick> inside = new HashSet<Brick>();
 
@@ -18,6 +19,7 @@ public class CollectionPit : MonoBehaviour
         if (inside.Add(brick))
         {
             OnCountChanged?.Invoke(inside.Count);
+            OnBrickEntered?.Invoke(brick.transform.position);
         }
     }
 

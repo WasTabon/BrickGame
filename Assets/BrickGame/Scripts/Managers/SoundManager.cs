@@ -56,6 +56,11 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySfx(AudioClip clip)
     {
+        PlaySfx(clip, 1f, 1f);
+    }
+
+    public void PlaySfx(AudioClip clip, float pitch, float volume = 1f)
+    {
         if (sfxMuted) return;
 
         if (clip == null)
@@ -66,18 +71,20 @@ public class SoundManager : MonoBehaviour
 
         AudioSource source = sfxPool[poolIndex];
         poolIndex = (poolIndex + 1) % sfxPool.Count;
+        source.pitch = pitch;
+        source.volume = volume;
         source.clip = clip;
         source.Play();
     }
 
     public void PlayTap()
     {
-        PlaySfx(tapClip);
+        PlaySfx(tapClip, 1f, 1f);
     }
 
     public void PlayTransition()
     {
-        PlaySfx(transitionClip);
+        PlaySfx(transitionClip, 1f, 1f);
     }
 
     public void PlayMusic(AudioClip clip)
