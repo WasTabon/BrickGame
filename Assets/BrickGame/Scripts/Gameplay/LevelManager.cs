@@ -19,6 +19,7 @@ public class LevelManager : MonoBehaviour
     public float buildingBaseX = 3.5f;
     public float truckX = -6f;
     public float pitHalfWidth = 0.8f;
+    public float pitTowerMargin = 0.8f;
     public float[] pitCentersSingle = { 1.2f };
     public float[] pitCentersDouble = { -0.3f, 2.4f };
 
@@ -115,42 +116,80 @@ public class LevelManager : MonoBehaviour
     private CollectionPit BuildPit(float centerX, LevelDef def)
     {
         float halfWidth = pitHalfWidth + Upgrades.MagnetBonus();
+
+        int columns = Mathf.Clamp(def.columns, 1, 4);
+        float totalWidth = (columns - 1) * colGap;
+        float towerLeftEdge = buildingBaseX - totalWidth * 0.5f - brickW * 0.5f;
+        float maxCenter = towerLeftEdge - pitTowerMargin - halfWidth;
+        float minCenter = truckX + 1.2f + halfWidth;
+        if (minCenter > maxCenter) minCenter = maxCenter;
+
+        float amp = def.pitMoveAmplitude;
+        float center;
+        if (amp > 0f)
+        {
+            float band = maxCenter - minCenter;
+            if (band < 0f) band = 0f;
+            if (amp * 2f > band) amp = band * 0.5f;
+            center = Mathf.Clamp(centerX, minCenter + amp, maxCenter - amp);
+        }
+        else
+        {
+            center = Mathf.Clamp(centerX, minCenter, maxCenter);
+        }
+
         GameObject group = new GameObject("PitGroup");
-        group.transform.position = new Vector3(centerX, 0f, 0f);
-        GameObject visual = new GameObject("PitVisual");
-        visual.transform.SetParent(group.transform, true);
+        group.transform.position = new Vector3(center, 0f, 0f);
+        Rigidbody2D body = group.AddComponent<Rigidbody2D>();
+        body.bodyType = RigidbodyType2D.Kinematic;
+        body.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-        GameObject floor = NewSprite("Floor", new Color(0.96f, 0.65f, 0.14f, 0.45f), new Vector3(centerX, 0.06f, 0f), new Vector3(halfWidth * 2f, 0.25f, 1f), -3);
-        floor.transform.SetParent(visual.transform, true);
-        GameObject postL = NewSprite("PostL", ColorBeam, new Vector3(centerX - halfWidth, 0.55f, 0f), new Vector3(0.14f, 1.1f, 1f), -2);
-        postL.transform.SetParent(visual.transform, true);
-        GameObject postR = NewSprite("PostR", ColorBeam, new Vector3(centerX + halfWidth, 0.55f, 0f), new Vector3(0.14f, 1.1f, 1f), -2);
-        postR.transform.SetParent(visual.transform, true);
+        float wallThick = 0.16f;
+        float wallHeight = 1.3f;
+        float wallY = 0.65f;
+        float floorThick = 0.3f;
+        float floorY = 0.15f;
 
-        GameObject pitGo = new GameObject("CollectionPit");
-        pitGo.transform.position = new Vector3(centerX, 1f, 0f);
-        BoxCollider2D trigger = pitGo.AddComponent<BoxCollider2D>();
-        trigger.isTrigger = true;
-        trigger.size = new Vector2(halfWidth * 2f, 2f);
-        CollectionPit pit = pitGo.AddComponent<CollectionPit>();
+        GameObject floor = MakePart(group.transform, "Floor", new Color(0.96f, 0.65f, 0.14f, 0.55f), new Vector3(0f, floorY, 0f), new Vector3(halfWidth * 2f, floorThick, 1f), -3);
+        GameObject postL = MakePart(group.transform, "PostL", ColorBeam, new Vector3(-halfWidth, wallY, 0f), new Vector3(wallThick, wallHeight, 1f), -2);
+        GameObject postR = MakePart(group.transform, "PostR", ColorBeam, new Vector3(halfWidth, wallY, 0f), new Vector3(wallThick, wallHeight, 1f), -2);
 
-        pitGo.transform.SetParent(group.transform, true);
+        CollectionPit pit = group.AddComponent<CollectionPit>();
 
-        PitJuice juice = visual.AddComponent<PitJuice>();
+        PitContact contact = group.AddComponent<PitContact>();
+        contact.pit = pit;
+        contact.floorCollider = floor.GetComponent<BoxCollider2D>();
+
+        PitJuice juice = group.AddComponent<PitJuice>();
         juice.pit = pit;
         juice.floor = floor.transform;
         juice.postL = postL.transform;
         juice.postR = postR.transform;
 
-        if (def.pitMoveAmplitude > 0f)
+        if (amp > 0f)
         {
             PitMover mover = group.AddComponent<PitMover>();
-            mover.baseX = centerX;
-            mover.amplitude = def.pitMoveAmplitude;
+            mover.baseX = center;
+            mover.amplitude = amp;
             mover.speed = def.pitMoveSpeed;
         }
 
         return pit;
+    }
+
+    private GameObject MakePart(Transform parent, string name, Color color, Vector3 localPos, Vector3 scale, int order)
+    {
+        GameObject go = new GameObject(name);
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = squareSprite;
+        sr.color = color;
+        sr.sortingOrder = order;
+        go.transform.SetParent(parent, false);
+        go.transform.localPosition = localPos;
+        go.transform.localScale = scale;
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = Vector2.one;
+        return go;
     }
 
     private int BuildTower(LevelDef def)
@@ -298,17 +337,6 @@ public class LevelManager : MonoBehaviour
         cam.transform.position = new Vector3((left + right) * 0.5f, size - 3f, -10f);
     }
 
-    private GameObject NewSprite(string name, Color color, Vector3 pos, Vector3 scale, int order)
-    {
-        GameObject go = new GameObject(name);
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = squareSprite;
-        sr.color = color;
-        sr.sortingOrder = order;
-        go.transform.position = pos;
-        go.transform.localScale = scale;
-        return go;
-    }
 
     private static Color HexColor(string hex)
     {

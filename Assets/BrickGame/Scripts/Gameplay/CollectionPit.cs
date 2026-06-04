@@ -13,23 +13,20 @@ public class CollectionPit : MonoBehaviour
     private readonly HashSet<Brick> counted = new HashSet<Brick>();
     private int collected;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public void Collect(Brick brick)
     {
-        Brick brick = other.GetComponent<Brick>();
         if (brick == null) return;
+        if (!counted.Add(brick)) return;
 
-        if (counted.Add(brick))
-        {
-            collected++;
-            Vector2 pos = brick.transform.position;
+        collected++;
+        Vector2 pos = brick.transform.position;
 
-            OnCountChanged?.Invoke(collected);
-            OnBrickEntered?.Invoke(pos);
+        OnCountChanged?.Invoke(collected);
+        OnBrickEntered?.Invoke(pos);
 
-            if (ComboManager.Instance != null) ComboManager.Instance.RegisterCollect(pos);
+        if (ComboManager.Instance != null) ComboManager.Instance.RegisterCollect(pos);
 
-            Consume(brick);
-        }
+        Consume(brick);
     }
 
     private void Consume(Brick brick)
