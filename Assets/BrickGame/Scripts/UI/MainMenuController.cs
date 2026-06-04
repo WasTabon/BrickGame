@@ -53,7 +53,7 @@ public class MainMenuController : MonoBehaviour
     {
         SoundManager.Instance.PlayTransition();
         HapticManager.Instance.Medium();
-        TransitionManager.Instance.FadeAndLoadScene("Game");
+        TransitionManager.Instance.FadeAndLoadScene("LevelSelect");
     }
 
     private void OnUpgradesClicked()

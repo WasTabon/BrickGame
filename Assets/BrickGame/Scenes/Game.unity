@@ -11386,16 +11386,37 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 0
     iceRows: 0
-  - rows: 18
+  - rows: 17
     columns: 2
     pitCount: 1
     stoneEvery: 0
     woodEvery: 5
     bombEvery: 0
     iceRows: 0
-  - rows: 20
+  - rows: 18
     columns: 2
     pitCount: 1
+    stoneEvery: 6
+    woodEvery: 0
+    bombEvery: 0
+    iceRows: 0
+  - rows: 19
+    columns: 2
+    pitCount: 1
+    stoneEvery: 6
+    woodEvery: 7
+    bombEvery: 0
+    iceRows: 0
+  - rows: 20
+    columns: 2
+    pitCount: 2
+    stoneEvery: 0
+    woodEvery: 0
+    bombEvery: 0
+    iceRows: 0
+  - rows: 21
+    columns: 3
+    pitCount: 2
     stoneEvery: 6
     woodEvery: 0
     bombEvery: 0
@@ -11403,10 +11424,24 @@ MonoBehaviour:
   - rows: 22
     columns: 3
     pitCount: 2
+    stoneEvery: 0
+    woodEvery: 0
+    bombEvery: 0
+    iceRows: 3
+  - rows: 22
+    columns: 3
+    pitCount: 2
     stoneEvery: 6
     woodEvery: 0
     bombEvery: 0
     iceRows: 3
+  - rows: 23
+    columns: 3
+    pitCount: 2
+    stoneEvery: 0
+    woodEvery: 0
+    bombEvery: 9
+    iceRows: 0
   - rows: 24
     columns: 3
     pitCount: 2
@@ -11414,13 +11449,41 @@ MonoBehaviour:
     woodEvery: 0
     bombEvery: 9
     iceRows: 0
+  - rows: 24
+    columns: 3
+    pitCount: 2
+    stoneEvery: 0
+    woodEvery: 7
+    bombEvery: 0
+    iceRows: 4
+  - rows: 25
+    columns: 3
+    pitCount: 2
+    stoneEvery: 5
+    woodEvery: 0
+    bombEvery: 10
+    iceRows: 0
+  - rows: 26
+    columns: 3
+    pitCount: 2
+    stoneEvery: 6
+    woodEvery: 0
+    bombEvery: 11
+    iceRows: 4
   - rows: 26
     columns: 3
     pitCount: 2
     stoneEvery: 5
     woodEvery: 7
+    bombEvery: 9
+    iceRows: 0
+  - rows: 28
+    columns: 3
+    pitCount: 2
+    stoneEvery: 5
+    woodEvery: 8
     bombEvery: 11
-    iceRows: 4
+    iceRows: 5
   brickW: 0.62
   brickH: 0.34
   supportH: 0.6
@@ -11429,6 +11492,11 @@ MonoBehaviour:
   buildingBaseX: 3.5
   truckX: -6
   pitHalfWidth: 0.8
+  pitCentersSingle:
+  - 1.2
+  pitCentersDouble:
+  - -0.3
+  - 2.4
 --- !u!4 &2146565295
 Transform:
   m_ObjectHideFlags: 0

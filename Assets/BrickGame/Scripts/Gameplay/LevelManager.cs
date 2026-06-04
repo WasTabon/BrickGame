@@ -18,6 +18,8 @@ public class LevelManager : MonoBehaviour
     public float buildingBaseX = 3.5f;
     public float truckX = -6f;
     public float pitHalfWidth = 0.8f;
+    public float[] pitCentersSingle = { 1.2f };
+    public float[] pitCentersDouble = { -0.3f, 2.4f };
 
     private readonly List<CollectionPit> pits = new List<CollectionPit>();
 
@@ -83,9 +85,11 @@ public class LevelManager : MonoBehaviour
 
     private void BuildPits(LevelDef def)
     {
-        float[] centers = def.pitCount >= 2
-            ? new float[] { -0.3f, 2.4f }
-            : new float[] { 1.2f };
+        float[] centers = def.pitCount >= 2 ? pitCentersDouble : pitCentersSingle;
+        if (centers == null || centers.Length == 0)
+        {
+            centers = def.pitCount >= 2 ? new float[] { -0.3f, 2.4f } : new float[] { 1.2f };
+        }
 
         foreach (float cx in centers)
         {

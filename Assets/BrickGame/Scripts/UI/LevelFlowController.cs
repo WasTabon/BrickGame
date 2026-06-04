@@ -38,6 +38,7 @@ public class LevelFlowController : MonoBehaviour
         int count = levelManager.TotalCollected();
         int total = levelManager.TotalBricks;
         int stars = ComputeStars(count, total);
+        GameSession.LastStars = stars;
 
         if (HapticManager.Instance != null)
         {

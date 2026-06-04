@@ -34,6 +34,7 @@ public class BattleResultPopup : MonoBehaviour
         EnsureListener();
 
         if (win) Economy.Add(GameSession.CollectedBricks);
+        if (win) SaveSystem.CompleteLevel(GameSession.Level, GameSession.LastStars);
 
         if (HapticManager.Instance != null)
         {
