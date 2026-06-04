@@ -6,11 +6,17 @@ using DG.Tweening;
 public class GameHUDController : MonoBehaviour
 {
     public TextMeshProUGUI countText;
+    public TextMeshProUGUI levelText;
     public Button collectButton;
 
     private int total;
     private int shown;
     private Tween countTween;
+
+    public void SetLevel(int level)
+    {
+        if (levelText != null) levelText.text = "Level " + level;
+    }
 
     public void SetTotal(int value)
     {

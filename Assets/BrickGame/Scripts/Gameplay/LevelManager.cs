@@ -1,0 +1,216 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class LevelManager : MonoBehaviour
+{
+    public Sprite squareSprite;
+    public PhysicsMaterial2D brickPhysics;
+    public GameHUDController hud;
+    public Camera cam;
+    public List<LevelDef> levels = new List<LevelDef>();
+
+    public float brickW = 0.62f;
+    public float brickH = 0.34f;
+    public float supportH = 0.6f;
+    public float colGap = 0.9f;
+    public float gap = 0.002f;
+    public float buildingBaseX = 2.5f;
+
+    private readonly List<CollectionPit> pits = new List<CollectionPit>();
+
+    public int TotalBricks { get; private set; }
+
+    private static readonly Color ColorSupport = HexColor("8E5BC9");
+    private static readonly Color ColorLight = HexColor("6BA8F0");
+    private static readonly Color ColorDark = HexColor("3A6FB0");
+    private static readonly Color ColorBeam = HexColor("F5A623");
+    private static readonly Color ColorHeavy = HexColor("20243A");
+
+    private void Awake()
+    {
+        if (cam == null) cam = Camera.main;
+
+        int level = Mathf.Max(1, GameSession.Level);
+        int index = levels.Count > 0 ? Mathf.Clamp(level - 1, 0, levels.Count - 1) : 0;
+        LevelDef def = levels.Count > 0 ? levels[index] : new LevelDef();
+
+        BuildPits(def);
+        TotalBricks = BuildTower(def);
+
+        foreach (CollectionPit pit in pits)
+        {
+            pit.OnCountChanged += OnPitChanged;
+        }
+
+        if (hud != null)
+        {
+            hud.SetLevel(level);
+            hud.SetTotal(TotalBricks);
+            hud.SetCount(0);
+        }
+
+        FitCamera(def);
+    }
+
+    private void OnDestroy()
+    {
+        foreach (CollectionPit pit in pits)
+        {
+            if (pit != null) pit.OnCountChanged -= OnPitChanged;
+        }
+    }
+
+    private void OnPitChanged(int ignored)
+    {
+        if (hud != null) hud.SetCount(TotalCollected());
+    }
+
+    public int TotalCollected()
+    {
+        int sum = 0;
+        foreach (CollectionPit pit in pits)
+        {
+            if (pit != null) sum += pit.CurrentCount();
+        }
+        return sum;
+    }
+
+    private void BuildPits(LevelDef def)
+    {
+        float[] centers = def.pitCount >= 2
+            ? new float[] { -1.3f, 0.9f }
+            : new float[] { -0.5f };
+
+        foreach (float cx in centers)
+        {
+            pits.Add(BuildPit(cx));
+        }
+    }
+
+    private CollectionPit BuildPit(float centerX)
+    {
+        float halfWidth = 1.4f;
+        GameObject visual = new GameObject("PitVisual");
+
+        GameObject floor = NewSprite("Floor", new Color(0.96f, 0.65f, 0.14f, 0.45f), new Vector3(centerX, 0.06f, 0f), new Vector3(halfWidth * 2f, 0.25f, 1f), -3);
+        floor.transform.SetParent(visual.transform, true);
+        GameObject postL = NewSprite("PostL", ColorBeam, new Vector3(centerX - halfWidth, 0.55f, 0f), new Vector3(0.14f, 1.1f, 1f), -2);
+        postL.transform.SetParent(visual.transform, true);
+        GameObject postR = NewSprite("PostR", ColorBeam, new Vector3(centerX + halfWidth, 0.55f, 0f), new Vector3(0.14f, 1.1f, 1f), -2);
+        postR.transform.SetParent(visual.transform, true);
+
+        GameObject pitGo = new GameObject("CollectionPit");
+        pitGo.transform.position = new Vector3(centerX, 2f, 0f);
+        BoxCollider2D trigger = pitGo.AddComponent<BoxCollider2D>();
+        trigger.isTrigger = true;
+        trigger.size = new Vector2(halfWidth * 2f, 4f);
+        CollectionPit pit = pitGo.AddComponent<CollectionPit>();
+
+        PitJuice juice = visual.AddComponent<PitJuice>();
+        juice.pit = pit;
+        juice.floor = floor.transform;
+        juice.postL = postL.transform;
+        juice.postR = postR.transform;
+
+        return pit;
+    }
+
+    private int BuildTower(LevelDef def)
+    {
+        GameObject building = new GameObject("Building");
+
+        int columns = Mathf.Clamp(def.columns, 1, 4);
+        float totalWidth = (columns - 1) * colGap;
+        float startX = buildingBaseX - totalWidth * 0.5f;
+        float[] colX = new float[columns];
+        for (int i = 0; i < columns; i++) colX[i] = startX + i * colGap;
+
+        int count = 0;
+
+        for (int i = 0; i < columns; i++)
+        {
+            BuildBrick(building.transform, new Vector3(colX[i], supportH * 0.5f, 0f), new Vector3(brickW, supportH, 1f), ColorSupport, false);
+            count++;
+        }
+
+        float currentTop = supportH;
+        int brickOrdinal = 0;
+
+        for (int r = 0; r < def.rows; r++)
+        {
+            float yc = currentTop + gap + brickH * 0.5f;
+            bool beamRow = r == 4 || r == 9 || r == 14 || r == 19 || r == 24;
+
+            if (beamRow)
+            {
+                BuildBrick(building.transform, new Vector3(buildingBaseX, yc, 0f), new Vector3(totalWidth + brickW, brickH, 1f), ColorBeam, false);
+                count++;
+            }
+            else
+            {
+                for (int i = 0; i < columns; i++)
+                {
+                    brickOrdinal++;
+                    bool heavy = def.heavyEvery > 0 && (brickOrdinal % def.heavyEvery == 0);
+                    Color c = heavy ? ColorHeavy : Color.Lerp(ColorDark, ColorLight, (float)r / def.rows);
+                    BuildBrick(building.transform, new Vector3(colX[i], yc, 0f), new Vector3(brickW, brickH, 1f), c, heavy);
+                    count++;
+                }
+            }
+
+            currentTop = yc + brickH * 0.5f;
+        }
+
+        return count;
+    }
+
+    private void BuildBrick(Transform parent, Vector3 pos, Vector3 scale, Color color, bool heavy)
+    {
+        GameObject go = new GameObject("Brick");
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = squareSprite;
+        sr.color = color;
+        sr.sortingOrder = 0;
+        go.transform.position = pos;
+        go.transform.localScale = scale;
+        go.transform.SetParent(parent, true);
+
+        Rigidbody2D rb = go.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 2.0f;
+        rb.mass = scale.x * scale.y * (heavy ? 16f : 8f);
+        rb.drag = 0.2f;
+        rb.angularDrag = 0.8f;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = Vector2.one;
+        col.sharedMaterial = brickPhysics;
+
+        go.AddComponent<Brick>();
+    }
+
+    private void FitCamera(LevelDef def)
+    {
+        if (cam == null) return;
+        float towerTop = supportH + def.rows * (brickH + gap);
+        cam.orthographicSize = Mathf.Clamp(towerTop * 0.9f + 4f, 10f, 15f);
+    }
+
+    private GameObject NewSprite(string name, Color color, Vector3 pos, Vector3 scale, int order)
+    {
+        GameObject go = new GameObject(name);
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = squareSprite;
+        sr.color = color;
+        sr.sortingOrder = order;
+        go.transform.position = pos;
+        go.transform.localScale = scale;
+        return go;
+    }
+
+    private static Color HexColor(string hex)
+    {
+        ColorUtility.TryParseHtmlString("#" + hex, out Color c);
+        return c;
+    }
+}

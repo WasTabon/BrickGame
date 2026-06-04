@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class LevelFlowController : MonoBehaviour
 {
-    public CollectionPit pit;
+    public LevelManager levelManager;
     public ResultPopup popup;
     public GameHUDController hud;
     public DemolitionController demolition;
@@ -35,8 +35,8 @@ public class LevelFlowController : MonoBehaviour
 
         yield return new WaitForSeconds(settleDelay);
 
-        int count = pit.CurrentCount();
-        int total = pit.totalBricks;
+        int count = levelManager.TotalCollected();
+        int total = levelManager.TotalBricks;
         int stars = ComputeStars(count, total);
 
         popup.Show(count, total, stars);
@@ -59,7 +59,7 @@ public class LevelFlowController : MonoBehaviour
 
     private void Battle()
     {
-        GameSession.CollectedBricks = pit.CurrentCount();
+        GameSession.CollectedBricks = levelManager.TotalCollected();
         TransitionManager.Instance.FadeAndLoadScene("Battle");
     }
 }

@@ -13,15 +13,12 @@ public class PitJuice : MonoBehaviour
     private Vector3 postRBase;
     private float lastTime;
 
-    private void Awake()
+    private void Start()
     {
         if (floor != null) floorBase = floor.localScale;
         if (postL != null) postLBase = postL.localScale;
         if (postR != null) postRBase = postR.localScale;
-    }
 
-    private void Start()
-    {
         if (pit != null) pit.OnBrickEntered += OnBrick;
     }
 

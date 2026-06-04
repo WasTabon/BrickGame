@@ -14,8 +14,10 @@ public class BattleController : MonoBehaviour
     public BattleResultPopup popup;
 
     public int debugDefaultAmmo = 20;
-    public int enemyCount = 8;
-    public int enemyHp = 2;
+    public int baseEnemyCount = 6;
+    public int enemiesPerLevel = 1;
+    public int baseEnemyHp = 1;
+    public int hpEveryLevels = 3;
     public float enemySpeed = 0.7f;
     public float baseLineX = -2.4f;
     public float spawnStartX = 5f;
@@ -23,6 +25,8 @@ public class BattleController : MonoBehaviour
     public float enemyY = -1.7f;
     public float fireInterval = 0.4f;
 
+    private int enemyCount;
+    private int enemyHp;
     private int ammo;
     private int aliveEnemies;
     private bool battleOver;
@@ -31,6 +35,10 @@ public class BattleController : MonoBehaviour
     private void Start()
     {
         if (cam == null) cam = Camera.main;
+
+        int level = Mathf.Max(1, GameSession.Level);
+        enemyCount = baseEnemyCount + (level - 1) * enemiesPerLevel;
+        enemyHp = baseEnemyHp + (level - 1) / Mathf.Max(1, hpEveryLevels);
 
         ammo = GameSession.CollectedBricks > 0 ? GameSession.CollectedBricks : debugDefaultAmmo;
 

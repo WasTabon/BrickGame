@@ -7,8 +7,6 @@ public class DemolitionController : MonoBehaviour
     public Camera cam;
     public Rope rope;
     public Truck truck;
-    public CollectionPit pit;
-    public GameHUDController hud;
 
     public float pullDuration = 1.0f;
     public float settleDelay = 0.5f;
@@ -19,26 +17,7 @@ public class DemolitionController : MonoBehaviour
     private void Start()
     {
         if (cam == null) cam = Camera.main;
-
         allBricks = FindObjectsByType<Brick>(FindObjectsSortMode.None);
-
-        pit.OnCountChanged += OnPitCount;
-
-        hud.SetTotal(pit.totalBricks);
-        hud.SetCount(0);
-    }
-
-    private void OnDestroy()
-    {
-        if (pit != null)
-        {
-            pit.OnCountChanged -= OnPitCount;
-        }
-    }
-
-    private void OnPitCount(int count)
-    {
-        hud.SetCount(count);
     }
 
     private void Update()
