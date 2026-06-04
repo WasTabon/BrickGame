@@ -28,6 +28,11 @@ public class GameHUDController : MonoBehaviour
         if (levelText != null) levelText.text = "Level " + level;
     }
 
+    public void SetLevelText(string label)
+    {
+        if (levelText != null) levelText.text = label;
+    }
+
     public void SetThrows(int maxThrows)
     {
         if (throwsText == null) return;

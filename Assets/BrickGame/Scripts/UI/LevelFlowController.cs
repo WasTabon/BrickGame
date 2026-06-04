@@ -45,6 +45,11 @@ public class LevelFlowController : MonoBehaviour
         int stars = ComputeStars(count, total);
         GameSession.LastStars = stars;
 
+        if (stars >= 3 && demolition != null && demolition.ThrowsUsed == 1)
+        {
+            Achievements.Unlock("one_pull");
+        }
+
         if (HapticManager.Instance != null)
         {
             if (stars >= 3) HapticManager.Instance.Heavy();

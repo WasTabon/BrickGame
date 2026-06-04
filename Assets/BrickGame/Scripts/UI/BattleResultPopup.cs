@@ -33,8 +33,23 @@ public class BattleResultPopup : MonoBehaviour
         gameObject.SetActive(true);
         EnsureListener();
 
-        if (win) Economy.Add(GameSession.CollectedBricks);
-        if (win) SaveSystem.CompleteLevel(GameSession.Level, GameSession.LastStars);
+        if (win)
+        {
+            Economy.Add(GameSession.CollectedBricks);
+
+            if (GameSession.IsDaily)
+            {
+                DailyChallenge.MarkDone(GameSession.LastStars);
+                Achievements.Unlock("daily_done");
+            }
+            else
+            {
+                SaveSystem.CompleteLevel(GameSession.Level, GameSession.LastStars);
+                if (GameSession.Level == 1) Achievements.Unlock("first_clear");
+                if (SaveSystem.UnlockedLevel >= 10) Achievements.Unlock("reach_10");
+                Achievements.CheckThreeStarFive();
+            }
+        }
 
         if (HapticManager.Instance != null)
         {
@@ -60,6 +75,12 @@ public class BattleResultPopup : MonoBehaviour
 
     private void OnAction()
     {
+        if (victory && GameSession.IsDaily)
+        {
+            TransitionManager.Instance.FadeAndLoadScene("MainMenu");
+            return;
+        }
+
         if (victory) GameSession.Level++;
         TransitionManager.Instance.FadeAndLoadScene("Game");
     }

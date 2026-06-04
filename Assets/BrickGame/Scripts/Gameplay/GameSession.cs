@@ -3,4 +3,5 @@ public static class GameSession
     public static int CollectedBricks;
     public static int Level = 1;
     public static int LastStars;
+    public static bool IsDaily;
 }

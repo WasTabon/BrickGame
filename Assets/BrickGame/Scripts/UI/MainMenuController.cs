@@ -11,6 +11,10 @@ public class MainMenuController : MonoBehaviour
     public TextMeshProUGUI brickCountText;
     public UpgradesPanel upgradesPanel;
     public SettingsPanel settingsPanel;
+    public Button dailyButton;
+    public TextMeshProUGUI dailyLabel;
+    public Button achievementsButton;
+    public AchievementsPanel achievementsPanel;
 
     private int shownBank;
 
@@ -27,6 +31,14 @@ public class MainMenuController : MonoBehaviour
         if (upgradesPanel != null)
         {
             upgradesPanel.onChanged = RefreshBank;
+        }
+
+        if (dailyButton != null) dailyButton.onClick.AddListener(OnDailyClicked);
+        if (achievementsButton != null) achievementsButton.onClick.AddListener(OnAchievementsClicked);
+
+        if (dailyLabel != null)
+        {
+            dailyLabel.text = DailyChallenge.IsTodayDone() ? "DAILY  ✓" : "DAILY";
         }
 
         AnimateBank();
@@ -51,9 +63,24 @@ public class MainMenuController : MonoBehaviour
 
     private void OnPlayClicked()
     {
+        GameSession.IsDaily = false;
         SoundManager.Instance.PlayTransition();
         HapticManager.Instance.Medium();
         TransitionManager.Instance.FadeAndLoadScene("LevelSelect");
+    }
+
+    private void OnDailyClicked()
+    {
+        GameSession.IsDaily = true;
+        GameSession.CollectedBricks = 0;
+        SoundManager.Instance.PlayTransition();
+        HapticManager.Instance.Medium();
+        TransitionManager.Instance.FadeAndLoadScene("Game");
+    }
+
+    private void OnAchievementsClicked()
+    {
+        if (achievementsPanel != null) achievementsPanel.Show();
     }
 
     private void OnUpgradesClicked()

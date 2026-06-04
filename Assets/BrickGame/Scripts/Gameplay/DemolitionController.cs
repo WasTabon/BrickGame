@@ -18,6 +18,7 @@ public class DemolitionController : MonoBehaviour
     private bool busy;
     private bool depleted;
     private int throwsUsed;
+    public int ThrowsUsed { get { return throwsUsed; } }
     private Brick[] allBricks;
 
     private void Start()
@@ -37,9 +38,9 @@ public class DemolitionController : MonoBehaviour
 
         if (nearest != null)
         {
+            throwsUsed++;
             if (maxThrows > 0)
             {
-                throwsUsed++;
                 if (hud != null) hud.SetThrowsLeft(maxThrows - throwsUsed);
                 if (throwsUsed >= maxThrows) depleted = true;
             }

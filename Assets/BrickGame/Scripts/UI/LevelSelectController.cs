@@ -50,6 +50,7 @@ public class LevelSelectController : MonoBehaviour
     {
         GameSession.Level = level;
         GameSession.CollectedBricks = 0;
+        GameSession.IsDaily = false;
         TransitionManager.Instance.FadeAndLoadScene("Game");
     }
 

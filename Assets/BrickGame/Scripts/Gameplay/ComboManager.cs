@@ -46,6 +46,8 @@ public class ComboManager : MonoBehaviour
         SpawnPopup(pos);
         UpdateComboUI();
 
+        if (combo >= 5) Achievements.Unlock("combo_5");
+
         if (shake != null && combo >= 3)
         {
             shake.Shake(Mathf.Min(0.05f + combo * 0.012f, 0.22f));

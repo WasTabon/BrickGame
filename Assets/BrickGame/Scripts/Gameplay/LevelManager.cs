@@ -42,8 +42,16 @@ public class LevelManager : MonoBehaviour
         if (cam == null) cam = Camera.main;
 
         int level = Mathf.Max(1, GameSession.Level);
-        int index = levels.Count > 0 ? Mathf.Clamp(level - 1, 0, levels.Count - 1) : 0;
-        LevelDef def = levels.Count > 0 ? levels[index] : new LevelDef();
+        LevelDef def;
+        if (GameSession.IsDaily)
+        {
+            def = DailyChallenge.Generate(DailyChallenge.TodaySeed());
+        }
+        else
+        {
+            int index = levels.Count > 0 ? Mathf.Clamp(level - 1, 0, levels.Count - 1) : 0;
+            def = levels.Count > 0 ? levels[index] : new LevelDef();
+        }
 
         BuildPits(def);
         TotalBricks = BuildTower(def);
@@ -55,7 +63,8 @@ public class LevelManager : MonoBehaviour
 
         if (hud != null)
         {
-            hud.SetLevel(level);
+            if (GameSession.IsDaily) hud.SetLevelText("Daily Challenge");
+            else hud.SetLevel(level);
             hud.SetTotal(TotalBricks);
             hud.SetCount(0);
         }
