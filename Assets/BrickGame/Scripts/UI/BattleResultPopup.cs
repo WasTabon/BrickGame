@@ -33,6 +33,8 @@ public class BattleResultPopup : MonoBehaviour
         gameObject.SetActive(true);
         EnsureListener();
 
+        if (win) Economy.Add(GameSession.CollectedBricks);
+
         titleText.text = win ? "VICTORY" : "DEFEAT";
         titleText.color = win ? new Color(0.96f, 0.65f, 0.14f, 1f) : new Color(0.88f, 0.33f, 0.27f, 1f);
         subtitleText.text = win ? "Wave cleared!" : "They broke through...";

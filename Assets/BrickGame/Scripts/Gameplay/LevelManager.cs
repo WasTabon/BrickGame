@@ -89,7 +89,7 @@ public class LevelManager : MonoBehaviour
 
     private CollectionPit BuildPit(float centerX)
     {
-        float halfWidth = 1.4f;
+        float halfWidth = 1.4f + Upgrades.MagnetBonus();
         GameObject visual = new GameObject("PitVisual");
 
         GameObject floor = NewSprite("Floor", new Color(0.96f, 0.65f, 0.14f, 0.45f), new Vector3(centerX, 0.06f, 0f), new Vector3(halfWidth * 2f, 0.25f, 1f), -3);
