@@ -10,6 +10,7 @@ public class MainMenuController : MonoBehaviour
     public Button upgradesButton;
     public TextMeshProUGUI brickCountText;
     public UpgradesPanel upgradesPanel;
+    public SettingsPanel settingsPanel;
 
     private int shownBank;
 
@@ -62,7 +63,9 @@ public class MainMenuController : MonoBehaviour
 
     private void OnSettingsClicked()
     {
-        settingsButton.transform.DOComplete();
-        settingsButton.transform.DOPunchRotation(new Vector3(0f, 0f, 15f), 0.3f, 8, 1f);
+        if (settingsPanel != null)
+        {
+            settingsPanel.Show();
+        }
     }
 }

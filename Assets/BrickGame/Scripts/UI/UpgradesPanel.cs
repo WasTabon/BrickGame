@@ -63,8 +63,13 @@ public class UpgradesPanel : MonoBehaviour
     public void Hide()
     {
         backdrop.blocksRaycasts = false;
-        gameObject.SetActive(false);
-        onChanged?.Invoke();
+        backdrop.DOFade(0f, 0.2f);
+        panel.DOScale(0f, 0.2f).SetEase(Ease.InBack)
+            .OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+                onChanged?.Invoke();
+            });
     }
 
     private void Buy(UpgradeRow row)

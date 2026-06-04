@@ -15,7 +15,7 @@ public class UIButtonAnimator : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     public void OnPointerDown(PointerEventData eventData)
     {
         scaleTween?.Kill();
-        scaleTween = transform.DOScale(baseScale * 0.95f, 0.1f).SetEase(Ease.OutQuad);
+        scaleTween = transform.DOScale(baseScale * 0.95f, 0.1f).SetEase(Ease.OutQuad).SetUpdate(true);
 
         if (HapticManager.Instance != null)
         {
@@ -26,15 +26,11 @@ public class UIButtonAnimator : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     public void OnPointerUp(PointerEventData eventData)
     {
         scaleTween?.Kill();
-        scaleTween = transform.DOScale(baseScale, 0.2f).SetEase(Ease.OutBack);
+        scaleTween = transform.DOScale(baseScale, 0.2f).SetEase(Ease.OutBack).SetUpdate(true);
 
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlayTap();
-        }
-        else
-        {
-            Debug.LogWarning("SoundManager is null on button press!");
         }
     }
 }
