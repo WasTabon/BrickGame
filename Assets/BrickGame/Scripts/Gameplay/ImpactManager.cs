@@ -12,6 +12,7 @@ public class ImpactManager : MonoBehaviour
     public float soundInterval = 0.06f;
     public float shakeInterval = 0.15f;
     public float shakeThreshold = 6f;
+    public float slowMoThreshold = 11f;
 
     private ParticleSystem[] pool;
     private int index;
@@ -62,6 +63,11 @@ public class ImpactManager : MonoBehaviour
             {
                 cameraShake.Shake(s);
             }
+        }
+
+        if (strength >= slowMoThreshold && SlowMoController.Instance != null)
+        {
+            SlowMoController.Instance.Request();
         }
     }
 }

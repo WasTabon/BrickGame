@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CollectionPit : MonoBehaviour
 {
@@ -9,33 +10,50 @@ public class CollectionPit : MonoBehaviour
     public event Action<int> OnCountChanged;
     public event Action<Vector2> OnBrickEntered;
 
-    private readonly HashSet<Brick> inside = new HashSet<Brick>();
+    private readonly HashSet<Brick> counted = new HashSet<Brick>();
+    private int collected;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         Brick brick = other.GetComponent<Brick>();
         if (brick == null) return;
 
-        if (inside.Add(brick))
+        if (counted.Add(brick))
         {
-            OnCountChanged?.Invoke(inside.Count);
-            OnBrickEntered?.Invoke(brick.transform.position);
+            collected++;
+            Vector2 pos = brick.transform.position;
+
+            OnCountChanged?.Invoke(collected);
+            OnBrickEntered?.Invoke(pos);
+
+            if (ComboManager.Instance != null) ComboManager.Instance.RegisterCollect(pos);
+
+            Consume(brick);
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    private void Consume(Brick brick)
     {
-        Brick brick = other.GetComponent<Brick>();
-        if (brick == null) return;
+        if (brick.body != null) brick.body.simulated = false;
 
-        if (inside.Remove(brick))
+        Collider2D col = brick.GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        SpriteRenderer sr = brick.GetComponent<SpriteRenderer>();
+        if (sr != null)
         {
-            OnCountChanged?.Invoke(inside.Count);
+            sr.DOKill();
+            sr.DOFade(0f, 0.28f);
         }
+
+        brick.transform.DOKill();
+        brick.transform.DOScale(0f, 0.3f).SetEase(Ease.InBack);
+
+        Destroy(brick.gameObject, 0.32f);
     }
 
     public int CurrentCount()
     {
-        return inside.Count;
+        return collected;
     }
 }

@@ -119,10 +119,10 @@ public class LevelManager : MonoBehaviour
         postR.transform.SetParent(visual.transform, true);
 
         GameObject pitGo = new GameObject("CollectionPit");
-        pitGo.transform.position = new Vector3(centerX, 2f, 0f);
+        pitGo.transform.position = new Vector3(centerX, 1f, 0f);
         BoxCollider2D trigger = pitGo.AddComponent<BoxCollider2D>();
         trigger.isTrigger = true;
-        trigger.size = new Vector2(halfWidth * 2f, 4f);
+        trigger.size = new Vector2(halfWidth * 2f, 2f);
         CollectionPit pit = pitGo.AddComponent<CollectionPit>();
 
         pitGo.transform.SetParent(group.transform, true);
