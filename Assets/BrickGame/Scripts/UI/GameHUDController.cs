@@ -9,6 +9,7 @@ public class GameHUDController : MonoBehaviour
     public TextMeshProUGUI levelText;
     public Button collectButton;
     public TextMeshProUGUI throwsText;
+    public Image progressFill;
 
     private int total;
     private int shown;
@@ -31,6 +32,12 @@ public class GameHUDController : MonoBehaviour
     public void SetLevelText(string label)
     {
         if (levelText != null) levelText.text = label;
+    }
+
+    public void SetProgress(int collected, int total)
+    {
+        if (progressFill == null) return;
+        progressFill.fillAmount = total > 0 ? Mathf.Clamp01((float)collected / total) : 0f;
     }
 
     public void SetThrows(int maxThrows)

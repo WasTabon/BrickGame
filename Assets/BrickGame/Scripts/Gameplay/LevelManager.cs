@@ -86,7 +86,11 @@ public class LevelManager : MonoBehaviour
 
     private void OnPitChanged(int ignored)
     {
-        if (hud != null) hud.SetCount(TotalCollected());
+        if (hud != null)
+        {
+            hud.SetCount(TotalCollected());
+            hud.SetProgress(TotalCollected(), TotalBricks);
+        }
     }
 
     public int TotalCollected()
@@ -165,6 +169,13 @@ public class LevelManager : MonoBehaviour
         juice.floor = floor.transform;
         juice.postL = postL.transform;
         juice.postR = postR.transform;
+        juice.rippleSprite = squareSprite;
+
+        PitGlow glow = group.AddComponent<PitGlow>();
+        glow.postL = postL.GetComponent<SpriteRenderer>();
+        glow.postR = postR.GetComponent<SpriteRenderer>();
+        glow.floor = floor.GetComponent<SpriteRenderer>();
+        glow.halfWidth = halfWidth;
 
         if (amp > 0f)
         {

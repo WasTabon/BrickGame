@@ -11,6 +11,7 @@ public class SlowMoController : MonoBehaviour
 
     private float lastTime = -99f;
     private bool active;
+    private bool frozen;
 
     private void Awake()
     {
@@ -20,6 +21,22 @@ public class SlowMoController : MonoBehaviour
             return;
         }
         Instance = this;
+    }
+
+    public void Freeze(float dur = 0.05f)
+    {
+        if (frozen || active) return;
+        if (Time.timeScale == 0f) return;
+        StartCoroutine(FreezeRun(dur));
+    }
+
+    private System.Collections.IEnumerator FreezeRun(float dur)
+    {
+        frozen = true;
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(dur);
+        if (Time.timeScale == 0f) Time.timeScale = 1f;
+        frozen = false;
     }
 
     public void Request()

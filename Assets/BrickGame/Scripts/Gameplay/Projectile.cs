@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
@@ -10,10 +11,28 @@ public class Projectile : MonoBehaviour
     public bool pierce;
     public bool explosive;
     public float explosionRadius = 1.4f;
+    public Sprite hitSprite;
+    public Color trailColor = new Color(1f, 0.65f, 0.15f, 1f);
 
     private Vector2 dir;
     private float timer;
     private readonly HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
+
+    private void Awake()
+    {
+        TrailRenderer trail = gameObject.AddComponent<TrailRenderer>();
+        trail.time = 0.18f;
+        trail.startWidth = 0.22f;
+        trail.endWidth = 0f;
+        trail.numCapVertices = 4;
+        trail.material = new Material(Shader.Find("Sprites/Default"));
+        Gradient g = new Gradient();
+        g.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(trailColor, 0f), new GradientColorKey(trailColor, 1f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(0.9f, 0f), new GradientAlphaKey(0f, 1f) });
+        trail.colorGradient = g;
+        trail.sortingOrder = 4;
+    }
 
     public void Launch(Vector2 targetPos)
     {
@@ -51,6 +70,9 @@ public class Projectile : MonoBehaviour
         {
             ImpactManager.Instance.RegisterImpact(transform.position, explosive ? 9f : 6f);
         }
+
+        Vfx.Flash(hitSprite, transform.position, new Color(1f, 0.9f, 0.5f, 1f), explosive ? 1.6f : 0.7f, 0.18f, 66);
+        Vfx.Sparks(hitSprite, transform.position, new Color(1f, 0.8f, 0.3f, 1f), explosive ? 8 : 5, explosive ? 1.3f : 0.7f);
 
         if (!pierce)
         {

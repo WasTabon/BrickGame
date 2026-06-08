@@ -7,6 +7,7 @@ public class PitJuice : MonoBehaviour
     public Transform floor;
     public Transform postL;
     public Transform postR;
+    public Sprite rippleSprite;
 
     private Vector3 floorBase;
     private Vector3 postLBase;
@@ -37,6 +38,25 @@ public class PitJuice : MonoBehaviour
         Pulse(floor, floorBase);
         Pulse(postL, postLBase);
         Pulse(postR, postRBase);
+
+        SpawnRipple(position);
+    }
+
+    private void SpawnRipple(Vector2 position)
+    {
+        if (rippleSprite == null) return;
+
+        GameObject go = new GameObject("Ripple");
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = rippleSprite;
+        sr.color = new Color(1f, 0.85f, 0.4f, 0.8f);
+        sr.sortingOrder = 5;
+        go.transform.position = position;
+        go.transform.localScale = Vector3.one * 0.3f;
+
+        go.transform.DOScale(1.6f, 0.4f).SetEase(Ease.OutQuad);
+        sr.DOFade(0f, 0.4f).SetEase(Ease.InQuad);
+        Object.Destroy(go, 0.45f);
     }
 
     private void Pulse(Transform t, Vector3 baseScale)

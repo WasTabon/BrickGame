@@ -13,6 +13,8 @@ public class ImpactManager : MonoBehaviour
     public float shakeInterval = 0.15f;
     public float shakeThreshold = 6f;
     public float slowMoThreshold = 11f;
+    public float freezeThreshold = 16f;
+    public float cameraZoomThreshold = 9f;
 
     private ParticleSystem[] pool;
     private int index;
@@ -65,9 +67,18 @@ public class ImpactManager : MonoBehaviour
             }
         }
 
-        if (strength >= slowMoThreshold && SlowMoController.Instance != null)
+        if (strength >= freezeThreshold && SlowMoController.Instance != null)
+        {
+            SlowMoController.Instance.Freeze();
+        }
+        else if (strength >= slowMoThreshold && SlowMoController.Instance != null)
         {
             SlowMoController.Instance.Request();
+        }
+
+        if (strength >= cameraZoomThreshold && CameraJuice.Instance != null)
+        {
+            CameraJuice.Instance.Punch(strength / 25f);
         }
     }
 }

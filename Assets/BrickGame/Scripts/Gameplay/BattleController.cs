@@ -13,6 +13,7 @@ public class BattleController : MonoBehaviour
     public BattleHUD hud;
     public BattleResultPopup popup;
     public BattleBuffPicker buffPicker;
+    public MuzzleFlash muzzleFlash;
 
     public int debugDefaultAmmo = 20;
     public int enemyCount = 8;
@@ -151,6 +152,8 @@ public class BattleController : MonoBehaviour
             cannon.DOKill();
             cannon.DOPunchPosition(new Vector3(-0.2f, 0f, 0f), 0.2f, 5, 1f);
         }
+
+        if (muzzleFlash != null) muzzleFlash.Flash();
     }
 
     private void OnEnemyDied(Enemy enemy)
