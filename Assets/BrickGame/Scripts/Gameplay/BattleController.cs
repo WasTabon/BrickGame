@@ -12,35 +12,67 @@ public class BattleController : MonoBehaviour
     public Projectile projectilePrefab;
     public BattleHUD hud;
     public BattleResultPopup popup;
+    public BattleBuffPicker buffPicker;
 
     public int debugDefaultAmmo = 20;
-    public int baseEnemyCount = 6;
-    public int enemiesPerLevel = 1;
-    public int baseEnemyHp = 1;
-    public int hpEveryLevels = 3;
+    public int enemyCount = 8;
+    public int enemyHp = 2;
     public float enemySpeed = 0.7f;
     public float baseLineX = -2.4f;
     public float spawnStartX = 5f;
     public float spawnStepX = 1.4f;
     public float enemyY = -1.7f;
     public float fireInterval = 0.4f;
+    public int projectileDamage = 1;
 
-    private int enemyCount;
-    private int enemyHp;
     private int ammo;
     private int aliveEnemies;
     private bool battleOver;
     private readonly List<Enemy> enemies = new List<Enemy>();
 
+    private int damageMul = 1;
+    private bool twinShot;
+    private bool pierce;
+    private bool explosive;
+
     private void Start()
     {
         if (cam == null) cam = Camera.main;
 
-        int level = Mathf.Max(1, GameSession.Level);
-        enemyCount = baseEnemyCount + (level - 1) * enemiesPerLevel;
-        enemyHp = baseEnemyHp + (level - 1) / Mathf.Max(1, hpEveryLevels);
+        BattleBuffs.Reset();
 
+        if (buffPicker != null)
+        {
+            buffPicker.Show(OnBuffChosen);
+        }
+        else
+        {
+            BeginBattle();
+        }
+    }
+
+    private void OnBuffChosen(BuffType type)
+    {
+        BeginBattle();
+    }
+
+    private void BeginBattle()
+    {
         ammo = GameSession.CollectedBricks > 0 ? GameSession.CollectedBricks : debugDefaultAmmo;
+
+        if (BattleBuffs.HasSelection)
+        {
+            switch (BattleBuffs.Selected)
+            {
+                case BuffType.DoubleDamage: damageMul = 2; break;
+                case BuffType.RapidFire: fireInterval *= 0.5f; break;
+                case BuffType.ExtraAmmo: ammo = Mathf.RoundToInt(ammo * 1.6f); break;
+                case BuffType.TwinShot: twinShot = true; break;
+                case BuffType.Pierce: pierce = true; break;
+                case BuffType.BigShells: explosive = true; break;
+                case BuffType.SlowEnemies: enemySpeed *= 0.5f; break;
+            }
+        }
 
         SpawnWave();
         hud.SetAmmo(ammo);
@@ -73,28 +105,31 @@ public class BattleController : MonoBehaviour
             if (battleOver) yield break;
             if (ammo <= 0) continue;
 
-            Enemy target = NearestVisibleToBase();
-            if (target == null) continue;
+            List<Enemy> targets = GetVisibleTargets(twinShot ? 2 : 1);
+            if (targets.Count == 0) continue;
 
-            Fire(target);
+            ammo--;
+            hud.SetAmmo(ammo);
+
+            foreach (Enemy t in targets)
+            {
+                Fire(t);
+            }
         }
     }
 
-    private Enemy NearestVisibleToBase()
+    private List<Enemy> GetVisibleTargets(int count)
     {
-        Enemy nearest = null;
-        float best = float.MaxValue;
+        List<Enemy> visible = new List<Enemy>();
         foreach (Enemy enemy in enemies)
         {
             if (enemy == null) continue;
             if (!IsOnScreen(enemy.transform.position)) continue;
-            if (enemy.transform.position.x < best)
-            {
-                best = enemy.transform.position.x;
-                nearest = enemy;
-            }
+            visible.Add(enemy);
         }
-        return nearest;
+        visible.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
+        if (visible.Count > count) visible.RemoveRange(count, visible.Count - count);
+        return visible;
     }
 
     private bool IsOnScreen(Vector3 worldPos)
@@ -105,10 +140,10 @@ public class BattleController : MonoBehaviour
 
     private void Fire(Enemy target)
     {
-        ammo--;
-        hud.SetAmmo(ammo);
-
         Projectile projectile = Instantiate(projectilePrefab, muzzle.position, Quaternion.identity);
+        projectile.damage = projectileDamage * damageMul;
+        projectile.pierce = pierce;
+        projectile.explosive = explosive;
         projectile.Launch(target.transform.position);
 
         if (cannon != null)
